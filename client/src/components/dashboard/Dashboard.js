@@ -3,12 +3,24 @@ import { Link } from 'react-router-dom'
 import { isEmpty } from 'lodash'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { getCurrentProfile } from '../../actions/profileActions'
+import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
 import Spinner from '../common/Spinner'
+import ProfileActions from './ProfileActions'
+import Experience from './Experience'
+import Education from './Education'
 
 class Dashboard extends Component {
+  constructor(props) {
+    super(props)
+
+    this.onDeleteClick = this.onDeleteClick.bind(this)
+  }
   componentDidMount() {
     this.props.getCurrentProfile()
+  }
+
+  onDeleteClick(e) {
+    this.props.deleteAccount()
   }
 
   render() {
@@ -21,7 +33,20 @@ class Dashboard extends Component {
       dashboardContent = <Spinner />
     } else {
       if (!isEmpty(profile)) {
-        dashboardContent = <h4>TODO: Display Profile</h4>
+        dashboardContent = (
+          <div>
+            <p className="lead text-muted">
+              Welcome <Link to={`/profile/${profile.handle}`}>{user.name}</Link>
+            </p>
+            <ProfileActions />
+            <Experience experience={profile.experience} />
+            <Education education={profile.education} />
+            <div style={{ marginBottom: '60px' }} />
+            <button onClick={this.onDeleteClick} className="btn btn-danger">
+              Delete My Account
+            </button>
+          </div>
+        )
       } else {
         dashboardContent = (
           <div>
@@ -51,7 +76,9 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   auth: PropTypes.object.isRequired,
-  profiles: PropTypes.object.isRequired
+  profiles: PropTypes.object.isRequired,
+  deleteAccount: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -62,6 +89,7 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {
+    deleteAccount,
     getCurrentProfile
   }
 )(Dashboard)
