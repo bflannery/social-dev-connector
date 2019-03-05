@@ -1,4 +1,5 @@
 import {
+  SET_PROFILES,
   SET_PROFILE,
   PROFILE_LOADING,
   CLEAR_CURRENT_PROFILE
@@ -27,6 +28,12 @@ export const profilesReducer = (state = initialState, action) => {
       return {
         ...state,
         profile: null
+      }
+    case SET_PROFILES:
+      return {
+        ...state,
+        profiles: action.payload,
+        loading: false
       }
     default:
       return state

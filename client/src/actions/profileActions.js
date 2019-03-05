@@ -4,6 +4,7 @@ import asyncWrapper from '../utils/asyncWrapper'
 import {
   CLEAR_CURRENT_PROFILE,
   SET_PROFILE,
+  SET_PROFILES,
   PROFILE_LOADING,
   SET_ERRORS,
   SET_CURRENT_USER
@@ -21,6 +22,11 @@ export const setProfileLoading = () => ({
 export const setCurrentProfile = (profile = {}) => ({
   type: SET_PROFILE,
   payload: profile
+})
+
+export const setProfiles = (profiles = []) => ({
+  type: SET_PROFILES,
+  payload: profiles
 })
 
 export const clearCurrentProfile = () => ({
@@ -90,4 +96,22 @@ export const deleteEducation = id => async dispatch => {
   )
   if (!error) return dispatch(setCurrentProfile(response.data))
   return dispatch(setErrorsAction(error.response.data))
+}
+
+// Get All Profiles
+export const getProfiles = () => async dispatch => {
+  dispatch(setProfileLoading())
+  const { error, response } = await asyncWrapper(axios.get('/api/profile/all'))
+  if (!error) return dispatch(setProfiles(response.data))
+  return dispatch(setErrorsAction(error.response.data))
+}
+
+// Get Profile By Handle
+export const getProfileByHandle = handle => async dispatch => {
+  dispatch(setProfileLoading())
+  const { error, response } = await asyncWrapper(
+    axios.get(`/api/profile/handle/${handle}`)
+  )
+  if (!error) return dispatch(setCurrentProfile(response.data))
+  return dispatch(setCurrentProfile())
 }
