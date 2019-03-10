@@ -8,6 +8,7 @@ import ProfileCreds from './ProfileCreds'
 import ProfileGithub from './ProfileGithub'
 import Spinner from '../common/Spinner'
 import { getProfileByHandle } from '../../actions/profileActions'
+import { isEmpty } from 'lodash'
 
 export class Profile extends Component {
   componentDidMount() {
@@ -16,11 +17,17 @@ export class Profile extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (isEmpty(nextProps.profiles.profile) && this.props.profiles.loading) {
+      this.props.history.push('/not-found')
+    }
+  }
+
   render() {
     const { profile, loading } = this.props.profiles
     let profileContent
 
-    if (profile === null || loading) {
+    if (isEmpty(profile) || loading) {
       profileContent = <Spinner />
     } else {
       profileContent = (
@@ -34,9 +41,14 @@ export class Profile extends Component {
             <div className="col-md-6" />
           </div>
           <ProfileHeader profile={profile} />
-          <ProfileAbout />
-          <ProfileCreds />
-          <ProfileGithub />
+          <ProfileAbout profile={profile} />
+          <ProfileCreds
+            education={profile.education}
+            experience={profile.experience}
+          />
+          {profile.githubusername ? (
+            <ProfileGithub username={profile.githubusername} />
+          ) : null}
         </div>
       )
     }

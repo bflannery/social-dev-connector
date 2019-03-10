@@ -14,13 +14,16 @@ const validatePostInput = require('../../validation/post')
 // @desc    Get post
 // @access  Public
 router.get('/', async (req, res) => {
-  let posts = await Post.findById(req.params.id).sort({ date: -1 })
+  try {
+    let posts = await Post.find().sort({ date: -1 })
+    if (posts.length === 0) {
+      return res.status(404).json({ nopostsfound: 'No posts found' })
+    }
 
-  if (posts.length === 0) {
-    return res.status(404).json({ nopostsfound: 'No posts found' })
+    return res.json(posts)
+  } catch (error) {
+    return error
   }
-
-  return res.json(posts)
 })
 
 // @route   GET api/posts:id
