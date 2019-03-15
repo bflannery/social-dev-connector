@@ -1,14 +1,10 @@
-import React, { Component } from 'react'
+import React from 'react'
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import PostItem from './PostItem'
 
-class PostFeed extends Component {
-  render() {
-    const { posts } = this.props
-
-    return posts.map(post => <PostItem post={post} key={post.id} />)
-  }
-}
+const PostFeed = ({ posts }) =>
+  _.map(posts, post => <PostItem post={post} key={post._id} />)
 
 PostFeed.propTypes = {
   posts: PropTypes.array.isRequired

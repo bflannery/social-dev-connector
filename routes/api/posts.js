@@ -94,24 +94,37 @@ router.post(
   '/like/:id',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    let post = await Post.findById(req.params.id)
+    try {
+      let post = await Post.findById(req.params.id)
 
-    if (post === null)
-      return res.status(404).json({ postnotfound: 'No post found' })
+      if (post === null)
+        return res.status(404).json({ postnotfound: 'No post found' })
 
-    const index = post.likes.findIndex(l => {
-      return l.user === req.user.id
-    })
+      const index = post.likes.findIndex(l => {
+        return l.user === req.user.id
+      })
 
-    if (index === -1) {
-      post.likes.push({ user: req.user.id })
-    } else {
-      post.likes.splice(index, 1)
+      if (
+        post.likes.filter(like => like.user.toString() === req.user.id).length >
+        0
+      ) {
+        return res
+          .status(400)
+          .json({ alreadyliked: 'User already liked this post' })
+      }
+
+      if (index === -1) {
+        post.likes.push({ user: req.user.id })
+      } else {
+        post.likes.splice(index, 1)
+      }
+
+      post = await post.save()
+
+      res.json(post)
+    } catch (err) {
+      return res.json(err)
     }
-
-    post = await post.save()
-
-    res.json(post)
   }
 )
 
@@ -139,11 +152,11 @@ router.post(
   }
 )
 
-// @route   POST api/posts/comment:id
+// @route   POST api/posts/comments:id
 // @desc    Add comment to a post
 // @access  Private
 router.post(
-  '/comment/:id',
+  '/comments/:id',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { errors, isValid } = validatePostInput(req.body)
@@ -173,11 +186,11 @@ router.post(
   }
 )
 
-// @route   DELETE api/posts/comment:id
+// @route   DELETE api/posts/comments:id
 // @desc    Remove comment from a post
 // @access  Private
 router.delete(
-  '/comment/:id/:comment_id',
+  '/comments/:id/:comment_id',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     let post = await Post.findById(req.params.id)

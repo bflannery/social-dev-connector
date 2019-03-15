@@ -37,7 +37,7 @@ export class Posts extends Component {
 
 Posts.propTypes = {
   getPosts: PropTypes.func.isRequired,
-  post: PropTypes.object.isRequired
+  posts: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
