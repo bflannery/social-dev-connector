@@ -57,37 +57,37 @@ export const addPost = postData => async dispatch => {
 export const getPosts = () => async dispatch => {
   dispatch(setPostLoadingAction())
   const { error, response } = await asyncWrapper(axios.get('/api/posts'))
-  if (error) return dispatch(setErrorsAction(error.response.data))
-  return dispatch(setPostsAction(response.data))
+  if (!error) return dispatch(setPostsAction(response.data))
+  return dispatch(setErrorsAction(error.response.data))
 }
 
 // Get Post
 export const getPost = id => async dispatch => {
   dispatch(setPostLoadingAction())
   const { error, response } = await asyncWrapper(axios.get(`/api/posts/${id}`))
-  if (error) return dispatch(setErrorsAction(error.response.data))
-  return dispatch(setPostAction(response.data))
+  if (!error) return dispatch(setPostAction(response.data))
+  return dispatch(setErrorsAction(error.response.data))
 }
 
 // Delete Post
 export const deletePost = id => async dispatch => {
   const { error } = await asyncWrapper(axios.delete(`/api/posts/${id}`))
-  if (error) return dispatch(getPosts(error.response.data))
-  return dispatch(deletePostAction(id))
+  if (!error) return dispatch(deletePostAction(id))
+  return dispatch(getPosts(error.response.data))
 }
 
 // Add Like
 export const addLike = id => async dispatch => {
   const { error } = await asyncWrapper(axios.post(`/api/posts/like/${id}`))
-  if (error) return dispatch(setErrorsAction(error.response.data))
-  return dispatch(getPosts())
+  if (!error) return dispatch(getPosts())
+  return dispatch(setErrorsAction(error.response.data))
 }
 
 // Remove Like
 export const removeLike = id => async dispatch => {
   const { error } = await asyncWrapper(axios.post(`/api/posts/unlike/${id}`))
-  if (error) return dispatch(setErrorsAction(error.response.data))
-  return dispatch(getPosts())
+  if (!error) return dispatch(getPosts())
+  return dispatch(setErrorsAction(error.response.data))
 }
 
 // Add New Comment
@@ -96,8 +96,8 @@ export const addComment = (postId, commentData) => async dispatch => {
   const { error, response } = await asyncWrapper(
     axios.post(`/api/posts/comments/${postId}`, commentData)
   )
-  if (error) return dispatch(setErrorsAction(error.response.data))
-  return dispatch(setPostAction(response.data))
+  if (!error) return dispatch(setPostAction(response.data))
+  return dispatch(setErrorsAction(error.response.data))
 }
 
 // Add New Comment
@@ -105,6 +105,6 @@ export const deleteComment = (postId, commentId) => async dispatch => {
   const { error, response } = await asyncWrapper(
     axios.delete(`/api/posts/comments/${postId}/${commentId}`)
   )
-  if (error) return dispatch(setErrorsAction(error.response.data))
-  return dispatch(setPostAction(response.data))
+  if (!error) return dispatch(setPostAction(response.data))
+  return dispatch(setErrorsAction(error.response.data))
 }

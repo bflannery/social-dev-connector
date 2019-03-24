@@ -42,50 +42,59 @@ export class PostItem extends Component {
                 alt="avatar"
               />
             </Link>
-            <br />
-            <p className="text-center">{post.name}</p>
           </div>
           <div className="col-md-10">
-            <p className="lead">{post.text}</p>
-            {showActions && (
-              <span>
-                <button
-                  value={post._id}
-                  onClick={this.onLikeClick.bind(this, post._id)}
-                  type="button"
-                  className="btn btn-light mr-1"
-                >
-                  <i
-                    className={classnames('fas fa-thumbs-up', {
-                      'text-info': this.findUserLike(post.likes)
-                    })}
-                  />
-                  <span className="badge badge-light">{post.likes.length}</span>
-                </button>
-                <button
-                  value={post._id}
-                  onClick={this.onUnlikeClick.bind(this, post._id)}
-                  type="button"
-                  className="btn btn-light mr-1"
-                >
-                  <i className="text-secondary fas fa-thumbs-down" />
-                </button>
-                <Link to={`/post/${post._id}`} className="btn btn-info mr-1">
-                  Comments
-                </Link>
-                {post.user === auth.user.id ? (
-                  <button
-                    type="button"
-                    value={post._id}
-                    className="btn btn-danger mr-1"
-                    onClick={this.onDeleteClick}
-                  >
-                    <i className="fas fa-times" />
-                  </button>
-                ) : null}
-              </span>
-            )}
+            <div className="row">
+              <p className="text-center">{post.name}</p>
+            </div>
+            <div className="row">
+              <p className="text-center">{post.date}</p>
+            </div>
           </div>
+        </div>
+        <div className="row">
+          <p className="lead col-md-11">{post.text}</p>
+        </div>
+        <div className="row">
+          <div className="col-md-6 pull-left">
+            <button
+              value={post._id}
+              onClick={this.onLikeClick.bind(this, post._id)}
+              type="button"
+              className="btn btn-light mr-1"
+            >
+              <i
+                className={classnames('fas fa-thumbs-up', {
+                  'text-info': this.findUserLike(post.likes)
+                })}
+              />
+              <span className="badge badge-light">{post.likes.length}</span>
+            </button>
+          </div>
+          <div className="col-md-6 text-right">
+            <span className="badge badge-light">
+              {post.comments.length} Comment
+              {post.comments.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
+        <div className="row">
+          <button
+            value={post._id}
+            onClick={this.onLikeClick.bind(this, post._id)}
+            type="button"
+            className="btn btn-light col-md-6"
+          >
+            Like
+          </button>
+          <button
+            value={post._id}
+            onClick={this.onLikeClick.bind(this, post._id)}
+            type="button"
+            className="btn btn-light col-md-6"
+          >
+            Comment
+          </button>
         </div>
       </div>
     )

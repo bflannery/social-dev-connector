@@ -2,6 +2,7 @@ import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 
 import setAuthToken from '../utils/setAuthToken'
+import asyncWrapper from '../utils/asyncWrapper'
 import { SET_ERRORS, SET_CURRENT_USER } from './types'
 
 // Set Errors
@@ -17,18 +18,19 @@ export const setCurrentUser = decoded => ({
 })
 
 export const registerUser = (userData, history) => async dispatch => {
-  try {
-    await axios.post('/api/users/register', userData)
-    history.push('/login')
-  } catch (error) {
-    return dispatch(setErrorsAction(error))
-  }
+  const { error } = await asyncWrapper(
+    axios.post('/api/users/register', userData)
+  )
+  if (!error) return history.push('/login')
+  return dispatch(setErrorsAction(error))
 }
 
 export const loginUser = userData => async dispatch => {
-  try {
-    const loginResponse = await axios.post('/api/users/login', userData)
-    const { token } = loginResponse.data
+  const { error, response } = await asyncWrapper(
+    axios.post('/api/users/login', userData)
+  )
+  if (!error) {
+    const { token } = response.data
     // Set token to localstorage
     localStorage.setItem('jwtToken', token)
     // Set token to Auth header
@@ -36,10 +38,9 @@ export const loginUser = userData => async dispatch => {
     // Decode token to get user data
     const decoded = jwt_decode(token)
     // Set current user
-    dispatch(setCurrentUser(decoded))
-  } catch (error) {
-    return dispatch(setErrorsAction(error))
+    return dispatch(setCurrentUser(decoded))
   }
+  return dispatch(setErrorsAction(error))
 }
 
 export const logoutUser = () => dispatch => {
