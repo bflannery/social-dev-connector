@@ -22,7 +22,7 @@ class ProfileAbout extends Component {
               {isEmpty(profile.bio) ? (
                 <span>{firstName} does not have a bio</span>
               ) : (
-                <span>at {profile.bio}</span>
+                <span>{profile.bio}</span>
               )}
             </p>
             <hr />

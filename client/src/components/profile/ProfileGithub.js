@@ -18,12 +18,13 @@ class ProfileGithub extends Component {
   componentDidMount() {
     const { username } = this.props
     const { count, sort, clientId, clientSecret } = this.state
-
+    console.log({ username})
     fetch(
       `http://api.github.com/users/${username}/repos?per_page=${count}&sort=${sort}&clientId=${clientId}&client_secret=${clientSecret}`
     )
       .then(res => res.json())
       .then(data => {
+        console.log({ data})
         this.setState({ repos: data })
       })
       .catch(err => console.log(err))
@@ -32,7 +33,7 @@ class ProfileGithub extends Component {
   render() {
     const { repos } = this.state
 
-    const repoItems = repos.map(repo => (
+    const repoItems = (repos || []).map(repo => (
       <div key={repo.id} className="card card-body mb-2">
         <div className="row">
           <div className="col-md-6">
